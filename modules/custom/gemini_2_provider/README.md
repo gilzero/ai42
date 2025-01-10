@@ -1,4 +1,4 @@
-## Gemini Provider
+## Gemini 2 Provider
 
 This module serves as a [Google Gemini](https://ai.google.dev/gemini-api/docs)
 provider for the [Drupal AI](https://www.drupal.org/project/ai) module.
@@ -29,3 +29,7 @@ To use this module, the following dependencies are required:
 ## Maintainers
 
 - Giorgi Jibladze (jibla) - https://www.drupal.org/u/jibla
+
+## Refactor for Gemini 2
+
+- Weiming Chen (gilzero)

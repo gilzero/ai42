@@ -8,7 +8,7 @@ use Drupal\ai\OperationType\Chat\StreamedChatMessageIterator;
 /**
  * Class GeminiChatMessageIterator.
  *
- * @package GeminiProvider
+ * @package gemini_2_provider
  */
 class GeminiChatMessageIterator extends StreamedChatMessageIterator {
 
