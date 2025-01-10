@@ -5,3 +5,7 @@ gemini_2_provider.settings:
     api_key:
       type: string
       label: 'The API key for Gemini API.'
+    model_id:
+        type: string
+        label: 'The Gemini Model ID'
+        default: 'gemini-2.0-flash-exp'

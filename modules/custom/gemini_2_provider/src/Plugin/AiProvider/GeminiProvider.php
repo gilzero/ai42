@@ -9,20 +9,22 @@ use Drupal\ai\OperationType\Chat\ChatInput;
 use Drupal\ai\OperationType\Chat\ChatInterface;
 use Drupal\ai\OperationType\Chat\ChatMessage;
 use Drupal\ai\OperationType\Chat\ChatOutput;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\gemini_provider\GeminiChatMessageIterator;
+use Drupal\gemini_2_provider\GeminiChatMessageIterator;
 use Gemini\Data\Content;
 use Gemini\Data\GenerationConfig;
 use Gemini\Enums\Role;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Plugin implementation of the Google's Gemini.
  */
 #[AiProvider(
-  id: 'gemini',
-  label: new TranslatableMarkup('Gemini')
+  id: 'gemini2',
+  label: new TranslatableMarkup('Gemini 2')
 )]
 class GeminiProvider extends AiProviderClientBase implements ChatInterface {
 
@@ -33,12 +35,27 @@ class GeminiProvider extends AiProviderClientBase implements ChatInterface {
    */
   protected $client;
 
+    /**
+     * Config factory.
+     *
+     * @var \Drupal\Core\Config\ConfigFactoryInterface
+     */
+    protected ConfigFactoryInterface $configFactory;
+
   /**
    * API Key.
    *
    * @var string
    */
   protected string $apiKey = '';
+
+    /**
+     * Model ID.
+     *
+     * @var string
+     */
+    protected string $modelId = '';
+
 
   /**
    * Run moderation call, before a normal call.
@@ -54,6 +71,28 @@ class GeminiProvider extends AiProviderClientBase implements ChatInterface {
    */
   protected Content|null $systemMessage = NULL;
 
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+        return new static(
+            $configuration,
+            $plugin_id,
+            $plugin_definition,
+            $container->get('config.factory')
+        );
+    }
+
+
+  /**
+   * {@inheritdoc}
+   * @param string|null $operation_type
+   * @param array $capabilities
+   */
+  public function getConfiguredModels(string $operation_type = NULL, array $capabilities = []): array {
+    return [];
+  }
 
   /**
    * {@inheritdoc}
@@ -84,7 +123,7 @@ class GeminiProvider extends AiProviderClientBase implements ChatInterface {
    * {@inheritdoc}
    */
   public function getConfig(): ImmutableConfig {
-    return $this->configFactory->get('gemini_provider.settings');
+    return $this->configFactory->get('gemini_2_provider.settings');
   }
 
   /**
@@ -92,7 +131,7 @@ class GeminiProvider extends AiProviderClientBase implements ChatInterface {
    */
   public function getApiDefinition(): array {
     $definition = Yaml::parseFile(
-      $this->moduleHandler->getModule('gemini_provider')
+      $this->moduleHandler->getModule('gemini_2_provider')
         ->getPath() . '/definitions/api_defaults.yml'
     );
     return $definition;
@@ -147,7 +186,7 @@ class GeminiProvider extends AiProviderClientBase implements ChatInterface {
     $config = new GenerationConfig(...$this->getConfiguration());
 
     // generate response
-    $response = $this->client->generativeModel($model_id)
+    $response = $this->client->generativeModel($this->modelId)
       ->withGenerationConfig($config);
 
     if ($this->streamed) {
@@ -205,15 +244,16 @@ class GeminiProvider extends AiProviderClientBase implements ChatInterface {
     if (!$this->client) {
       if (!$this->apiKey) {
         $this->setAuthentication($this->loadApiKey());
-    }
-    $this->modelId = 'gemini-2.0-flash-exp'; // Hardcoded model ID
-    $this->client = \Gemini::factory()
-      ->withApiKey($this->apiKey)
-      ->withHttpClient($this->httpClient)
-      ->make();
+      }
+        $this->modelId = $this->configFactory->get('gemini_2_provider.settings')->get('model_id');
+
+
+      $this->client = \Gemini::factory()
+        ->withApiKey($this->apiKey)
+        ->withHttpClient($this->httpClient)
+        ->make();
     }
   }
-
 
   /**
    * Load API key from key module.

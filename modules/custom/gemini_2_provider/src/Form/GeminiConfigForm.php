@@ -79,6 +79,16 @@ final class GeminiConfigForm extends ConfigFormBase {
       '#default_value' => $config->get('api_key'),
     ];
 
+    $form['model_id'] = [
+        '#type' => 'select',
+        '#title' => $this->t('Gemini Model ID'),
+        '#description' => $this->t('The Gemini Model to use.'),
+        '#default_value' => 'gemini-2.0-flash-exp',
+        '#options' => [
+            'gemini-2.0-flash-exp' => 'Gemini 2 Flash Experimental',
+        ],
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -88,6 +98,7 @@ final class GeminiConfigForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config('gemini_2_provider.settings')
       ->set('api_key', $form_state->getValue('api_key'))
+      ->set('model_id', $form_state->getValue('model_id'))
       ->save();
     parent::submitForm($form, $form_state);
   }
