@@ -1,0 +1,6 @@
+gemini_2_provider.gemini_config:
+  title: Gemini 2 Authentication
+  description: Setup Google Gemini 2.
+  route_name: gemini_2_provider.gemini_config
+  parent: ai.admin_providers
+  weight: 10

@@ -1,0 +1,8 @@
+{
+    "name": "drupal/gemini_2_provider",
+    "description": "Gemini 2.0 Flash Experimental provider for AI module.",
+    "type": "drupal-module",
+    "require": {
+        "google-gemini-php/client": "^1.0"
+    }
+}

@@ -1,0 +1,7 @@
+gemini_2_provider.gemini_config:
+  path: '/admin/config/ai/providers/gemini2'
+  defaults:
+    _title: 'Gemini 2 Authentication'
+    _form: 'Drupal\gemini_2_provider\Form\GeminiConfigForm'
+  requirements:
+    _permission: 'administer ai providers'
