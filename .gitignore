@@ -1,0 +1,34 @@
+# Drupal-specific exclusions
+sites/default/settings.php
+sites/default/services.yml
+sites/*/files/*
+sites/*/private/*
+sites/simpletest
+
+# Database dumps
+*.sql
+*.dump
+
+# Temporary files
+*.swp
+*.swo
+.*.swp
+._*
+.DS_Store
+Thumbs.db
+*.log
+
+# Cache directories
+sites/default/files/php/*
+sites/default/files/css/*
+sites/default/files/js/*
+
+# IDE specific files
+.idea/
+
+# Composer
+/vendor/
+!composer.lock
+
+# Other
+*.bak
